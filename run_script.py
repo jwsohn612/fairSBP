@@ -16,13 +16,12 @@ import argparse
 import subprocess
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--epochs", default = 1000, help = "number of training epochs", type = int)
 parser.add_argument("--plambda", default = 0, help = "lambda", type = float)
 parser.add_argument("--dround", default = 1, help = "T'", type = int)
 parser.add_argument("--data-name", help = "name of data to be imported", default = None)
 parser.add_argument("--learning_rate", default = 0.005, type = float)
 parser.add_argument("--save-name", default = None)
-parser.add_argument("--fair-type", help = "choose either es or eo", default = None)
+parser.add_argument("--fair-type", help = "choose either sp or eo", default = None)
 parser.add_argument("--seed", default = 20220702, type=int)
 parser.add_argument("--method", help = "method to be experimented", default = None)
 
@@ -30,9 +29,8 @@ args = parser.parse_args()
 
 # first_col_cont = False # Scenario I
 first_col_cont = True # Scenario II
-binarize = False
 
-parent_dir = "/home/sohn24/Desktop/fairness/simulation/" + args.data_name + "_" + args.fair_type + '/'
+save_dir = "/home/sohn24/Desktop/fairness/simulation/" + args.data_name + "_" + args.fair_type + '/'
 data_dir = "/home/sohn24/Desktop/fairness/simulation/datasets/"
 
 data_name = args.data_name
@@ -42,7 +40,7 @@ seed = args.seed
 save_unit = 100
 save_unitc = 100
 
-save_path =  os.path.join(parent_dir, args.save_name+ "/")
+save_path =  os.path.join(save_dir, args.save_name+ "/")
 if not os.path.exists(save_path):
     os.makedirs(save_path)
     print(f"Directory '{save_path}' created successfully!")
@@ -71,13 +69,8 @@ method = args.method
 learning_rate = args.learning_rate
 
 if data_name == 'adult':
-    if method == "fairPRED":
-        epochs = 50
-    else:
-        epochs = 600
-        
     batch_size = 300
-    ldim = 64 # 256 for Scenario2
+    ldim = 64
     loss_type = 'ce'
     out_act = 'sigmoid'
     if first_col_cont == False:
@@ -87,13 +80,8 @@ if data_name == 'adult':
     conepochs0 = 20000
     
 elif data_name == 'employment':
-    if method == "fairPRED":
-        epochs = 50
-    else:
-        epochs = 50
-        
     batch_size = 300
-    ldim = 64 # 256 for Scenario2
+    ldim = 64 
     loss_type = 'ce'
     out_act = 'sigmoid'
     if first_col_cont == False:
@@ -103,11 +91,6 @@ elif data_name == 'employment':
     conepochs0 = 20000
         
 elif data_name == 'law':
-    if method == "fairPRED":
-        epochs = 50
-    else:
-        epochs = 600
-        
     batch_size = 300
     ldim = 64
     loss_type = 'ce'
@@ -118,11 +101,6 @@ elif data_name == 'law':
         sensitive_attrs = None
 
 elif data_name == 'credit':
-    if method == "fairPRED":
-        epochs = 50
-    else:
-        epochs = 600
-        
     batch_size = 300
     ldim = 64
     loss_type = 'ce'
@@ -143,12 +121,10 @@ elif data_name == 'crime':
     conepochs0 = 20000
     
 dl = data_loader(data_dir=data_dir, data_name=data_name, sensitive_attrs = sensitive_attrs, batch_size=batch_size, epochs=epochs, seed=seed)
-data = dl.get_data(binarize_conti_sen=binarize)
+data = dl.get_data()
 
 train_ds = data[0]
 (VX,VA,VY) = data[1]
-
-np.mean(VY)
 
 if method == "fairSBP":
     model = fairSBP(loss_type = loss_type, fair_type = fair_type, out_act=out_act,learning_rate=learning_rate, dround = dround, xdim = data[2][0], adim = data[2][1], plam = plam, ldim = ldim)
