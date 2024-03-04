@@ -11,7 +11,7 @@ __Authors__: Jinwon Sohn, Qifan Song, and Guang Lin.
 - 'models' includes all competing models.
 - 'utils' includes functions to import the data sets and to calculate evaluation metrics. 
 
-The figures and tables in the manuscript are based on the calculated scores. To reproduce the results, one may need to find the Pareto frontiers to the produced metrics.
+The figures and tables in the manuscript are based on the calculated scores. To reproduce the results, one may need to find the Pareto frontiers for the produced metrics.
 
 ### Requirement
 - Python 3.8
