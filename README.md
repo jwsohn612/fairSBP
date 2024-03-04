@@ -9,4 +9,4 @@ __Authors__: Jinwon Sohn, Qifan Song, and Guang Lin.
 ### Description
 - 'datasets' contains the real data sets used in the simulation section.
 - 'models' includes all competing models.
-- 'utils' includes 
+- 'utils' includes functions to import the data sets and to calculate evaluation metrics. 
