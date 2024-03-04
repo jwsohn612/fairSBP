@@ -10,3 +10,8 @@ __Authors__: Jinwon Sohn, Qifan Song, and Guang Lin.
 - 'datasets' contains the real data sets used in the simulation section.
 - 'models' includes all competing models.
 - 'utils' includes functions to import the data sets and to calculate evaluation metrics. 
+
+
+### Requirement
+- Python 3.8
+- Tensorflow 2.4.0
