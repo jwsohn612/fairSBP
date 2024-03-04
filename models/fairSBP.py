@@ -9,7 +9,7 @@ from tensorflow import keras
 
 
 
-class fairNFP(): 
+class fairSBP(): 
     
     def __init__(self, loss_type, fair_type, out_act, learning_rate, dround, xdim, adim, plam, ldim):
         

@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 from data_loader import data_loader
-from fairNFP import fairNFP
+from fairSBP import fairSBP
 from fairKDE import fairKDE
 from fairHGR import fairHGR
 from fairNEU import fairNEU
@@ -150,8 +150,8 @@ train_ds = data[0]
 
 np.mean(VY)
 
-if method == "fairNFP":
-    model = fairNFP(loss_type = loss_type, fair_type = fair_type, out_act=out_act,learning_rate=learning_rate, dround = dround, xdim = data[2][0], adim = data[2][1], plam = plam, ldim = ldim)
+if method == "fairSBP":
+    model = fairSBP(loss_type = loss_type, fair_type = fair_type, out_act=out_act,learning_rate=learning_rate, dround = dround, xdim = data[2][0], adim = data[2][1], plam = plam, ldim = ldim)
 
 elif method == "fairCONR":
     if first_col_cont == False:
@@ -188,13 +188,13 @@ if data_name != 'crime':
 else: 
     early_stopping_patience = 100
     
-if (method == "fairNFP")&(method == "fairNFPL"):
+if (method == "fairSBP"):
     early_stopping_patience = 100
 
 early_stopping_counter = 0
 
 t1 = datetime.now()
-if (method == "fairNEU")|((method == 'fairNFP')&(fair_type=='eo')):
+if (method == "fairNEU")|((method == 'fairSBP')&(fair_type=='eo')):
 
     for i, train_set in tqdm(enumerate(train_ds)):
         X = train_set[0]
@@ -203,7 +203,7 @@ if (method == "fairNEU")|((method == 'fairNFP')&(fair_type=='eo')):
 
         loss = model.pretrain_classifier(X,A,Y)
         
-        if (method == 'fairNFP') | (method == 'fairNFPL'): 
+        if (method == 'fairSBP'): 
             val_loss = model.evaluate_pc(VA,VY)
         else:
             val_loss = model.fit_loss(VY, model.evaluate(VX))
