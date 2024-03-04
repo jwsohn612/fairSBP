@@ -6,4 +6,7 @@ __Abstract__: As the data-driven decision process becomes dominating for industr
 
 __Authors__: Jinwon Sohn, Qifan Song, and Guang Lin. 
 
-
+### Description
+- 'datasets' contains the real data sets used in the simulation section.
+- 'models' includes all competing models.
+- 'utils' includes 
