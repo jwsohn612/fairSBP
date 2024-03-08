@@ -41,8 +41,8 @@ elif syn_type == 2:
 elif syn_type == 3:
     data_name = 'crime'
 
-save_dir = "/your_dir/" + args.data_name + "_" + args.fair_type + '/'
-data_dir = "/your_dir/datasets/"
+save_dir = "/../" + args.data_name + "_" + args.fair_type + '/'
+data_dir = "/../datasets/"
 
 data_name = args.data_name
 fair_type = args.fair_type

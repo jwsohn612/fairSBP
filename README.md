@@ -16,3 +16,11 @@ The figures and tables in the manuscript are based on the calculated scores. To 
 ### Requirement
 - Python 3.8
 - Tensorflow 2.4.0
+
+### Implementation 
+
+Here is an example to implement the main script; running our model (fairSBP) for Scenario II on Adult data where the trade-off parameter is 0.9
+
+```console
+my@com:~python run_script.py --data-name adult --fair-type eo --scenario-type 2 --method fairSBP --plambda 0.9
+```
