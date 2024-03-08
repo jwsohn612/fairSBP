@@ -4,8 +4,10 @@ import pandas as pd
 from datetime import datetime
 from data_loader import data_loader
 from fairSBP import fairSBP
+from fairSBPL import fairSBPL
 from fairKDE import fairKDE
 from fairHGR import fairHGR
+from fairHGRL import fairHGRL
 from fairNEU import fairNEU
 from fairCONR import fairCONR
 from utils import basic_metrics, evaluation_metrics, evaluation_metrics_cont, evaluation_metrics_contout
@@ -19,19 +21,28 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--plambda", default = 0, help = "lambda", type = float)
 parser.add_argument("--dround", default = 1, help = "T'", type = int)
 parser.add_argument("--data-name", help = "name of data to be imported", default = None)
-parser.add_argument("--learning_rate", default = 0.005, type = float)
+parser.add_argument("--learning-rate", default = 0.005, type = float)
 parser.add_argument("--save-name", default = None)
 parser.add_argument("--fair-type", help = "choose either sp or eo", default = None)
 parser.add_argument("--seed", default = 20220702, type=int)
+parser.add_argument("--scenario-type", help = "scenario type", default = 1, type=int)
 parser.add_argument("--method", help = "method to be experimented", default = None)
 
 args = parser.parse_args()
 
 # first_col_cont = False # Scenario I
-first_col_cont = True # Scenario II
+# first_col_cont = True # Scenario II
 
-save_dir = "/home/sohn24/Desktop/fairness/simulation/" + args.data_name + "_" + args.fair_type + '/'
-data_dir = "/home/sohn24/Desktop/fairness/simulation/datasets/"
+syn_type = args.scenario_type 
+if syn_type == 1:
+    first_col_cont = False
+elif syn_type == 2:
+    first_col_cont = True
+elif syn_type == 3:
+    data_name = 'crime'
+
+save_dir = "/your_dir/" + args.data_name + "_" + args.fair_type + '/'
+data_dir = "/your_dir/datasets/"
 
 data_name = args.data_name
 fair_type = args.fair_type
@@ -119,7 +130,8 @@ elif data_name == 'crime':
     out_act = None 
     sensitive_attrs = ['racepctblack']
     conepochs0 = 20000
-    
+
+
 dl = data_loader(data_dir=data_dir, data_name=data_name, sensitive_attrs = sensitive_attrs, batch_size=batch_size, epochs=epochs, seed=seed)
 data = dl.get_data()
 
@@ -129,19 +141,18 @@ train_ds = data[0]
 if method == "fairSBP":
     model = fairSBP(loss_type = loss_type, fair_type = fair_type, out_act=out_act,learning_rate=learning_rate, dround = dround, xdim = data[2][0], adim = data[2][1], plam = plam, ldim = ldim)
 
+elif method == "fairSBPL":
+    model = fairSBPL(loss_type = loss_type, fair_type = fair_type, out_act=out_act,learning_rate=learning_rate, dround = dround, xdim = data[2][0], adim = data[2][1], plam = plam, ldim = ldim)    
+
 elif method == "fairCONR":
-    if first_col_cont == False:
-        syn_type = 1
-    else:
-        syn_type = 2
-    if data_name == 'crime':
-        syn_type = 3
-        
     model = fairCONR(loss_type = loss_type, fair_type = fair_type, out_act=out_act,learning_rate=learning_rate, dround = dround, xdim = data[2][0], adim = data[2][1], plam = plam, ldim = ldim, syn_type=syn_type)
     
 elif method == "fairHGR":
     model = fairHGR(loss_type = loss_type, fair_type = fair_type, out_act=out_act,learning_rate=learning_rate, dround = dround, xdim = data[2][0], adim = data[2][1], plam = plam, ldim = ldim)
-    
+
+elif method == "fairHGRL":
+    model = fairHGRL(loss_type = loss_type, fair_type = fair_type, out_act=out_act,learning_rate=learning_rate, dround = dround, xdim = data[2][0], adim = data[2][1], plam = plam, ldim = ldim)
+
 elif method == "fairKDE":
     model = fairKDE(loss_type = loss_type, fair_type = fair_type, out_act=out_act,learning_rate=learning_rate, dround = dround, xdim = data[2][0], adim = data[2][1], plam = plam, ldim = ldim)   
     
@@ -164,13 +175,13 @@ if data_name != 'crime':
 else: 
     early_stopping_patience = 100
     
-if (method == "fairSBP"):
+if (method == "fairSBP")|(method == "fairSBPL"):
     early_stopping_patience = 100
 
 early_stopping_counter = 0
 
 t1 = datetime.now()
-if (method == "fairNEU")|((method == 'fairSBP')&(fair_type=='eo')):
+if (method == "fairNEU")|((method == 'fairSBP')&(fair_type=='eo'))|((method == 'fairSBPL')&(fair_type=='eo')):
 
     for i, train_set in tqdm(enumerate(train_ds)):
         X = train_set[0]
@@ -179,7 +190,7 @@ if (method == "fairNEU")|((method == 'fairSBP')&(fair_type=='eo')):
 
         loss = model.pretrain_classifier(X,A,Y)
         
-        if (method == 'fairSBP'): 
+        if (method == 'fairSBP')|(method == 'fairSBPL'): 
             val_loss = model.evaluate_pc(VA,VY)
         else:
             val_loss = model.fit_loss(VY, model.evaluate(VX))
@@ -222,7 +233,7 @@ for i, train_set in tqdm(enumerate(train_ds)):
         test_loss = model.fit_loss(VY, ypred)
         
         if data_name != 'crime':
-            if (first_col_cont == False)|(binarize == True):
+            if (first_col_cont == False):
                 out_df0 = evaluation_metrics(i, VA, VY, ypred, var_loc=0)
             else:
                 out_df0 = evaluation_metrics_cont(i, VA, VY, ypred, var_loc=0)
@@ -241,8 +252,13 @@ for i, train_set in tqdm(enumerate(train_ds)):
         basic_df = basic_metrics(i, plam, train_loss.numpy(), test_loss.numpy(), cp_time, gpu_names[0])
         basic_info_list.append(basic_df)
 
+# Common optimization outputs 
 pd.concat(basic_info_list,axis=0).to_csv(save_path + "basic_{}_{}.csv".format(int(plam*100),seed))
+
+# Scores w.r.t. the first sensitive attribute 
 pd.concat(var_loc0_list,axis=0).to_csv(save_path + "varloc0_{}_{}.csv".format(int(plam*100),seed))
+
+# Scores w.r.t. the second sensitive attribute
 if A.shape[1]==2:
     pd.concat(var_loc1_list,axis=0).to_csv(save_path + "varloc1_{}_{}.csv".format(int(plam*100),seed))
 
