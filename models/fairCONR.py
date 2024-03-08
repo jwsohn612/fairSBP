@@ -7,7 +7,8 @@ from tqdm import tqdm
 import os
 from tensorflow import keras
 
-
+# The below code script is written by referring to the original work:   
+# 'Achieving equalized odds by resampling sensitive attributes, Romano et al., 2020'.
 
 class fairCONR(): 
     
@@ -59,10 +60,6 @@ class fairCONR():
         fake_loss = self.ce(tf.zeros_like(x2), x2)
         D_loss = real_loss + fake_loss
         return  D_loss
-    
-    def neural_wloss(self, x1, x2, weight):
-        loss = tf.math.log(x1+1e-5) + tf.multiply(tf.math.log(1-x2+1e-5),weight)
-        return -tf.reduce_mean(loss)
     
     def fit_loss(self, y, yhat):
         if self.loss_type == 'mae':
@@ -185,7 +182,7 @@ class fairCONR():
         x_ = layers.Input(shape = (self.ydim,)) 
         z = layers.Input(shape = (self.adim,)) # Concentration Parameter
 
-        if (self.fair_type == 'eo')|(self.fair_type == 'pp'):
+        if (self.fair_type == 'eo'):
             y = layers.Input(shape = (1,))
             cx = layers.Concatenate()([x_, z, y])
         else:
@@ -199,7 +196,7 @@ class fairCONR():
         x = layers.ReLU()(x)
         x = layers.Dense(1, activation = None)(x)
         
-        if (self.fair_type == 'eo')|(self.fair_type == 'pp'):
+        if (self.fair_type == 'eo'):
             model = keras.Model(inputs = [x_, z, y], outputs = x, name = "discriminator")
         else:
             model = keras.Model(inputs = [x_, z], outputs = x, name = "discriminator")
@@ -257,22 +254,10 @@ class fairCONR():
         elif self.syn_type == 3:
             return self.model_based_sensi2(Y)
     
-    def get_weights(self, Y, A):
-        if self.fair_type == 'eo':
-            w = self.da(self.pD([Y,A], training = False))
-            #w = tf.ones_like(A)*0.5
-            return w/(1-w)
-        
-        elif self.fair_type == 'pp':
-            weight = tf.reshape(tf.reduce_mean(A), (-1,1))
-#             weight = 0.85
-            w = 1/weight * A  + 1/(1-weight) * (1-A)
-            return w
-    
     @tf.function
     def train_neural_netdist_eo(self, X,A,Y):
         for j in range(self.dround):
-            weight = self.get_weights(Y,A)
+            # weight = self.get_weights(Y,A)
             with tf.GradientTape() as n:
                 
                 ref = self.generate_random_sensi(A, Y)
@@ -289,7 +274,6 @@ class fairCONR():
     
     @tf.function
     def get_cov(self, x, y):
-#         if self.syn_type == 1:
         mean_x = tf.reduce_mean(x)
         mean_y = tf.reduce_mean(y, axis=0)
 
@@ -303,7 +287,6 @@ class fairCONR():
     @tf.function
     def train_fair_classifier_eo(self, X,A,Y):
         
-        weight = self.get_weights(Y,A)
         with tf.GradientTape() as t:
 
             YhatA = self.h(X, training = True)

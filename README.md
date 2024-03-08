@@ -11,7 +11,6 @@ __Authors__: Jinwon Sohn, Qifan Song, and Guang Lin.
 - 'models' includes all competing models.
 - 'utils' includes functions to import the data sets and to calculate evaluation metrics. 
 
-The figures and tables in the manuscript are based on the calculated scores. To reproduce the results, one may need to find the Pareto frontiers for the produced metrics.
 
 ### Requirement
 - Python 3.8
@@ -19,10 +18,10 @@ The figures and tables in the manuscript are based on the calculated scores. To 
 
 ### Implementation 
 
-Here is an example to implement the main script; running our model (fairSBP) for Scenario II on Adult data where the trade-off parameter is 0.9. Note the 'datasets' and 'utils' directories should be appropriately placed. 
+Here is an example to implement the main script; running our model (fairSBP) for separation in Scenario II on Adult data where the trade-off parameter is 0.9. Note the 'datasets' and 'utils' directories should be appropriately placed. 
 
 ```console
 my@com:~ $ python run_script.py --data-name adult --fair-type eo --scenario-type 2 --method fairSBP --plambda 0.9
 ```
 
-To implement other models, refer to the scripts in 'models'.
+To implement other models, refer to the scripts in 'models'. The figures and tables in the manuscript are based on the calculated scores. To reproduce the results, one may need to find the Pareto frontiers for the produced metrics.
