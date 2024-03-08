@@ -18,10 +18,13 @@ __Authors__: Jinwon Sohn, Qifan Song, and Guang Lin.
 
 ### Implementation 
 
-Here is an example to implement the main script; running our model (fairSBP) for separation in Scenario II on Adult data where the trade-off parameter is 0.9. Note the 'datasets' and 'utils' directories should be appropriately placed (refer to run_script.py)
+Here is an example to implement the main script; running our model (fairSBP) for separation in Scenario II on Adult data where the trade-off parameter is 0.9. Note the 'datasets' and 'utils' directories should be appropriately placed (refer to run_script.py).
 
 ```console
 my@com:~ $ python run_script.py --data-name adult --fair-type eo --scenario-type 2 --method fairSBP --plambda 0.9
 ```
 
 To implement other models, refer to the scripts in 'models'. The figures and tables in the manuscript are based on the calculated scores. To reproduce the results, one may need to find the Pareto frontiers for the produced metrics.
+
+### Issues
+During the project, the website http://www.seaphe.org/databases.php provided the Law School Admission data, but not anymore. One can still find the data set in the shared directory.
