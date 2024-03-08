@@ -3,8 +3,6 @@ import pandas as pd
 from sklearn.metrics import roc_curve
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import f1_score
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
 import tensorflow as tf
 from sklearn.metrics import confusion_matrix
 from scipy import stats
