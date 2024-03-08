@@ -27,4 +27,4 @@ my@com:~ $ python run_script.py --data-name adult --fair-type eo --scenario-type
 To implement other models, refer to the scripts in 'models'. The figures and tables in the manuscript are based on the calculated scores. To reproduce the results, one may need to find the Pareto frontiers for the produced metrics.
 
 ### Issues
-During the project, the website http://www.seaphe.org/databases.php provided the Law School Admission data, but not anymore. One can still find the data set in the shared directory.
+During the project, we utilized the Law School Admission data from the website http://www.seaphe.org/databases.php. However, this source is no longer available. The dataset can still be accessed in the shared directory.
