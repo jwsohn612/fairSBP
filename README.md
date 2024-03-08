@@ -19,8 +19,10 @@ The figures and tables in the manuscript are based on the calculated scores. To 
 
 ### Implementation 
 
-Here is an example to implement the main script; running our model (fairSBP) for Scenario II on Adult data where the trade-off parameter is 0.9
+Here is an example to implement the main script; running our model (fairSBP) for Scenario II on Adult data where the trade-off parameter is 0.9. Note the 'datasets' and 'utils' directories should be appropriately placed. 
 
 ```console
-my@com:~python run_script.py --data-name adult --fair-type eo --scenario-type 2 --method fairSBP --plambda 0.9
+my@com:~ $ python run_script.py --data-name adult --fair-type eo --scenario-type 2 --method fairSBP --plambda 0.9
 ```
+
+To implement other models, refer to the scripts in 'models'.
